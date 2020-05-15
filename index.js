@@ -1,11 +1,11 @@
 const readline = require('readline-sync')
+const robots = {
+    text: require('./robots/text.js')
+}
 
 function start(){
-    const conteudo = {}
 
-    conteudo.buscarTermo = askAndReturnSearchTerm();
-    conteudo.buscarTermo = askAndReturnPrefix();
-    
+    //Métodos
     function askAndReturnSearchTerm(){
         return readline.question('Digite o termo a ser buscado no Wikipedia:    ');
     }
@@ -17,7 +17,13 @@ function start(){
         return selectedPrefixText;
     }
 
+    //Processamento
+    const conteudo = {}
 
+    conteudo.searchTerm = askAndReturnSearchTerm();
+    conteudo.prefix = askAndReturnPrefix();
+
+    robots.text(conteudo);
 
     console.log(conteudo);
 }
