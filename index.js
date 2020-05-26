@@ -20,18 +20,21 @@ async function start(){
         }
 
         //Processamento
-        const conteudo = {}
+        const conteudo = {
+            maximumContent: 7
+        }
 
         conteudo.searchTerm = askAndReturnSearchTerm();
         conteudo.prefix = askAndReturnPrefix();
 
         await robots.text(conteudo);
-        console.log(conteudo);
+        //console.log(conteudo);
+        console.log(JSON.stringify(conteudo),null,2);
 
     }catch(e){
         console.log(e)
     }
-
+    //console.log(JSON.stringify(conteudo),null,2);
 }
 
 start();
