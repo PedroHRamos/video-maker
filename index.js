@@ -29,7 +29,7 @@ async function start(){
 
         await robots.text(conteudo);
         //console.log(conteudo);
-        console.log(JSON.stringify(conteudo),null,2);
+        console.log(JSON.stringify(conteudo,null,4));
 
     }catch(e){
         console.log(e)

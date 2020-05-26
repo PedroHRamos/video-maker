@@ -1,10 +1,9 @@
 const algorithmia = require('algorithmia');
 const algorithmiaApiKey = require('../credentials/algorithmia.json').apiKey;
 const sentenceBoundaryDetection = require('sbd') ;
-
+const fs = require('fs');
 const watsonApiKey = require('../credentials/watson-nlu.json').apikey;
-
-const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
+var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
  
 var nlu = new NaturalLanguageUnderstandingV1({
   iam_apikey: watsonApiKey,
@@ -12,30 +11,29 @@ var nlu = new NaturalLanguageUnderstandingV1({
   url: 'https://gateway.watsonplatform.net/natural-language-understanding/api/'
 });
 
-async function fetchWatsonAndReturnKeyswords(sentence){
-    return new Promise((resolve, reject) =>
-        nlu.analyse({
-            text: sentence,
-            features: {
-                keyWords: {}
-            }
-        }, (error, response) => {
-            if(error){
-                reject( error)
-                return
-            }
-            // Essas keyword são apenas uma das possibilidades com o watson da IBM
-            // Podemos também pegar a relevância das keywords
-            // Ou emoção positiva ou negativa envolvida na frase
-            // Futuramente esse ponto deverá evoluir para aumentar a qualidade dos resultados
-            response.result.keywords.map((keyword) => {
-                return keyword.text
-           })
-           resolve(keywords)
+async function fetchWatsonAndReturnKeywords(sentence) {
+    return new Promise((resolve, reject) => {
+      nlu.analyze({
+        text: sentence,
+        features: {
+          keywords: {}
+        }
+      }, (error, response) => {
+        if (error) {
+          throw error          
+        }
+        // Essas keyword são apenas uma das possibilidades com o watson da IBM
+        // Podemos também pegar a relevância das keywords
+        // Ou emoção positiva ou negativa envolvida na frase
+        // Futuramente esse ponto deverá evoluir para aumentar a qualidade dos resultados
+        const keywords = response.keywords.map((keyword) => {
+          return keyword.text
         })
-    
-    )
-}
+
+        resolve(keywords)
+      })
+    })
+  }
 
 async function robot(content){
     
@@ -109,7 +107,7 @@ async function robot(content){
 
     async function fetchKeywordsOfAllSentences(content){
         for(const sentence of content.sentences){
-            sentence.keywords = await fetchWatsonAndReturnKeyswords(sentence.text);
+            sentence.keywords = await fetchWatsonAndReturnKeywords(sentence.text);
         }
     }
 
@@ -118,8 +116,8 @@ async function robot(content){
     sanitizeContent(content);
     breakContentIntoSentences(content);
     limitMaximumSentences(content);
-    fetchKeywordsOfAllSentences(content);
-    
+    await fetchKeywordsOfAllSentences(content);
+        
 }
 
 module.exports = robot;
