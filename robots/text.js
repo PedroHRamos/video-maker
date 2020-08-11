@@ -5,11 +5,13 @@ const fs = require('fs');
 const watsonApiKey = require('../credentials/watson-nlu.json').apikey;
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
  
-var nlu = new NaturalLanguageUnderstandingV1({
+const nlu = new NaturalLanguageUnderstandingV1({
   iam_apikey: watsonApiKey,
   version: '2018-04-05',
   url: 'https://gateway.watsonplatform.net/natural-language-understanding/api/'
 });
+
+const state = require('./state.js');
 
 async function fetchWatsonAndReturnKeywords(sentence) {
     return new Promise((resolve, reject) => {
@@ -35,7 +37,7 @@ async function fetchWatsonAndReturnKeywords(sentence) {
     })
   }
 
-async function robot(content){
+async function robot(){
     
     //Métodos
     async function fetchContentFromWikipedia(content){
@@ -112,11 +114,15 @@ async function robot(content){
     }
 
     //Processamento
+    const content = state.load();
+
     await fetchContentFromWikipedia(content);
     sanitizeContent(content);
     breakContentIntoSentences(content);
     limitMaximumSentences(content);
     await fetchKeywordsOfAllSentences(content);
+
+    state.save(content);
         
 }
 
