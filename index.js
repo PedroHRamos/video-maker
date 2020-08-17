@@ -13,7 +13,7 @@ async function start(){
         await robots.image();
 
         const content = robots.state.load();
-        console.dir(content,{deph: null});
+        //console.dir(content,{deph: null});
     }catch(e){
         console.log(e)
     }

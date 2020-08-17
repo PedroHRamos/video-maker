@@ -108,3 +108,5 @@ dist
 
 #images
 *.png
+
+.DS_STORE

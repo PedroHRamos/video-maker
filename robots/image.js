@@ -1,3 +1,4 @@
+const imageDownloader = require('image-downloader');
 const google = require('googleapis').google;
 const customSearch = google.customsearch('v1');
 const state = require('./state.js');
@@ -28,7 +29,7 @@ async function robot(){
             cx: googleSearchCredentials.searchEngineId,
             q: query,
             searchType: 'image',
-            num: 2
+            num: 3
         });
 
         const imagesUrl = response.data.items.map((item) =>{
